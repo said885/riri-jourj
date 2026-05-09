@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import { motion, useScroll, useTransform, useSpring } from "framer-motion";
-import { Instagram, Phone, MessageCircle, Menu, X, Check, ChevronDown, MapPin, Calendar, User, Phone as PhoneIcon } from "lucide-react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { Instagram, Phone, MessageCircle, Menu, X, ChevronDown, MapPin, Calendar, User, Phone as PhoneIcon, Bot, Send, Loader2 } from "lucide-react";
 
 const fleet = [
   { id: 1, name: "Porsche Cayenne S", category: "SUV Prestige", price: "350€", badge: "-200€", image: "/images/cayenne-ext.jpg", features: ["Cuir Nappa", "Climatisation", "Chauffeur"] },
@@ -25,19 +25,19 @@ const navLinks = [
   { name: "Contact", href: "#contact" },
 ];
 
-function SkeletonCard() {
-  return (
-    <div className="relative h-48 rounded-xl overflow-hidden bg-white/5">
-      <div className="absolute inset-0 border border-gold/20 rounded-xl animate-pulse" />
-      <div className="absolute inset-0 border-[2px] border-transparent hover:border-gold/40 rounded-xl transition-colors duration-500" />
-    </div>
-  );
-}
+const INITIAL_MESSAGES = [
+  { role: "assistant", content: "Bonjour ! Je suis l'assistant virtuel de Riri Jour J. Comment puis-je vous aider à planifier votre événement exceptionnel ?" },
+];
 
 export default function Home() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [form, setForm] = useState({ nom: "", tel: "", date: "", lieu: "", type: "Mariage" });
+  const [chatOpen, setChatOpen] = useState(false);
+  const [messages, setMessages] = useState(INITIAL_MESSAGES);
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
@@ -51,6 +51,10 @@ export default function Home() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
   const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
     setMenuOpen(false);
@@ -61,6 +65,35 @@ export default function Home() {
     const msg = `Bonjour,%0AJe souhaiterais réserver un véhicule.%0A%0A📛 Nom: ${form.nom}%0A📞 Téléphone: ${form.tel}%0A📅 Date: ${form.date}%0A📍 Lieu: ${form.lieu}%0A🎉 Événement: ${form.type}`;
     window.open(`https://wa.me/33762912640?text=${msg}`, "_blank");
   };
+
+  const sendMessage = async () => {
+    if (!input.trim() || loading) return;
+    
+    const userMsg = { role: "user", content: input };
+    setMessages(prev => [...prev, userMsg]);
+    setInput("");
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: input }),
+      });
+      const data = await res.json();
+      setMessages(prev => [...prev, { role: "assistant", content: data.response }]);
+    } catch {
+      setMessages(prev => [...prev, { role: "assistant", content: "Excusez-moi, une erreur est survenue. Veuillez réessayer ou nous contacter directement sur WhatsApp." }]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const quickQuestions = [
+    "Quels véhicules proposez-vous ?",
+    "Prix pour un mariage ?",
+    "Comment réserver ?",
+  ];
 
   return (
     <>
@@ -149,7 +182,6 @@ export default function Home() {
                 transition={{ delay: i * 0.1 }}
                 className="group relative rounded-2xl overflow-hidden"
               >
-                {/* Gold border animation */}
                 <div className="absolute inset-0 border-2 border-gold/0 group-hover:border-gold/40 rounded-2xl transition-colors duration-500" />
                 
                 <div className="relative h-52">
@@ -199,9 +231,7 @@ export default function Home() {
                 transition={{ delay: i * 0.05 }}
                 className="relative aspect-square group"
               >
-                {/* Skeleton / Loading state */}
                 <div className="absolute inset-0 border border-white/10 group-hover:border-gold/30 rounded-lg transition-colors duration-300" />
-                
                 <Image
                   src={post.image}
                   alt={post.alt}
@@ -281,6 +311,93 @@ export default function Home() {
         </div>
         <p className="text-center text-white/15 text-[10px] mt-4">© 2024 Riri Jour J • Ne pas jeter sur la voie publique</p>
       </footer>
+
+      {/* CHATBOT GEMINI FLOAT */}
+      <motion.div className="fixed bottom-20 right-5 z-40">
+        <motion.button
+          onClick={() => setChatOpen(!chatOpen)}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="w-12 h-12 bg-gradient-to-r from-gold to-yellow-400 rounded-full flex items-center justify-center shadow-lg"
+        >
+          <Bot className="w-6 h-6 text-black" />
+        </motion.button>
+      </motion.div>
+
+      {/* CHAT WINDOW */}
+      {chatOpen && (
+        <motion.div
+          initial={{ opacity: 0, y: 20, scale: 0.9 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 20, scale: 0.9 }}
+          className="fixed bottom-32 right-5 w-80 sm:w-96 h-[500px] bg-black/95 backdrop-blur-md rounded-2xl border border-gold/20 overflow-hidden z-50 flex flex-col"
+        >
+          {/* Header */}
+          <div className="p-4 bg-gold/10 border-b border-gold/20 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Bot className="w-5 h-5 text-gold" />
+              <span className="font-cormorant text-gold font-semibold">Assistant IA</span>
+            </div>
+            <button onClick={() => setChatOpen(false)}>
+              <X size={18} className="text-white/60" />
+            </button>
+          </div>
+
+          {/* Messages */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-3">
+            {messages.map((msg, i) => (
+              <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
+                <div className={`max-w-[80%] p-3 rounded-xl text-sm ${msg.role === "user" ? "bg-gold text-black" : "bg-white/10 text-white/80"}`}>
+                  {msg.content}
+                </div>
+              </div>
+            ))}
+            {loading && (
+              <div className="flex justify-start">
+                <div className="bg-white/10 p-3 rounded-xl">
+                  <Loader2 className="w-5 h-5 text-gold animate-spin" />
+                </div>
+              </div>
+            )}
+            <div ref={messagesEndRef} />
+          </div>
+
+          {/* Quick Questions */}
+          {messages.length <= 1 && !loading && (
+            <div className="px-3 pb-2 flex flex-wrap gap-2">
+              {quickQuestions.map((q, i) => (
+                <button
+                  key={i}
+                  onClick={() => { setInput(q); }}
+                  className="text-xs px-2 py-1 bg-white/5 hover:bg-white/10 rounded-full text-white/60"
+                >
+                  {q}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Input */}
+          <div className="p-3 border-t border-gold/10 flex gap-2">
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+              placeholder="Posez-moi une question..."
+              className="flex-1 bg-white/5 rounded-lg px-3 py-2 text-sm text-white placeholder-white/30 focus:outline-none"
+              disabled={loading}
+            />
+            <button
+              onClick={sendMessage}
+              disabled={loading || !input.trim()}
+              className="p-2 bg-gold rounded-lg disabled:opacity-50"
+            >
+              <Send size={16} className="text-black" />
+            </button>
+          </div>
+        </motion.div>
+      )}
 
       {/* WHATSAPP FLOAT */}
       <motion.a href="https://wa.me/33762912640" target="_blank" initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.5, type: "spring" }} whileHover={{ scale: 1.1 }} className="fixed bottom-5 right-5 w-12 h-12 bg-gold rounded-full flex items-center justify-center z-50 shadow-lg">

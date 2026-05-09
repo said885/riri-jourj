@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { Tenor_Sans, Inter } from "next/font/google";
+import { Cormorant_Display, Inter } from "next/font/google";
 import "./globals.css";
 
-const tenor = Tenor_Sans({
-  weight: "400",
+const cormorant = Cormorant_Display({
+  weight: ["300", "400", "500", "600", "700"],
   subsets: ["latin"],
-  variable: "--font-tenor",
+  variable: "--font-cormorant",
   display: "swap",
 });
 
@@ -17,8 +17,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Riri Jour J | Conciergerie de Prestige à Metz",
-  description: "Location de véhicules de prestige avec chauffeur pour vos événements exceptionnels.",
+  title: "Riri Jour J | Porsche Cayenne S - Conciergerie de Prestige",
+  description: "Location de Porsche Cayenne S avec chauffeur pour vos événements exceptionnels à Metz.",
 };
 
 export default function RootLayout({
@@ -28,7 +28,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fr" className="scroll-smooth">
-      <body className={`${tenor.variable} ${inter.variable} antialiased`}>
+      <body className={`${cormorant.variable} ${inter.variable} antialiased`}>
         {children}
       </body>
     </html>

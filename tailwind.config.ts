@@ -6,9 +6,13 @@ const config: Config = {
     extend: {
       colors: {
         gold: "#C5A059",
+        purple: {
+          300: "#c4a5ff",
+          400: "#a78bfa",
+        },
       },
       fontFamily: {
-        tenor: ["Tenor Sans", "sans-serif"],
+        cormorant: ["Cormorant Display", "serif"],
         inter: ["Inter", "sans-serif"],
       },
     },

@@ -85,7 +85,11 @@ export default function Home() {
       {/* NAV */}
       <motion.nav className={`fixed top-0 left-0 right-0 z-40 transition-all ${scrolled ? "glass py-3" : "py-6"}`}>
         <div className="max-w-6xl mx-auto px-6 flex items-center justify-between">
-          <button onClick={() => scrollTo("hero")} className="font-tenor text-xl text-gold tracking-[0.2em]">RIRI JOUR J</button>
+          <button onClick={() => scrollTo("hero")} className="flex items-center gap-3">
+            <div className="w-10 h-10 relative">
+              <Image src="/images/logo.png" alt="Riri Jour J" fill className="object-contain" />
+            </div>
+          </button>
           <div className="hidden lg:flex items-center gap-8">
             {["Accueil", "Confort", "Événements", "Contact"].map((l) => (
               <button key={l} onClick={() => scrollTo(l.toLowerCase())} className="text-sm text-white/40 hover:text-gold transition">{l}</button>
@@ -244,9 +248,14 @@ export default function Home() {
       {/* FOOTER */}
       <footer className="py-10 border-t border-white/5">
         <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
-          <div>
-            <p className="font-tenor text-lg text-gold">RIRI JOUR J</p>
-            <p className="text-white/20 text-sm">Metz • Lorraine</p>
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 relative">
+              <Image src="/images/logo.png" alt="Riri Jour J" fill className="object-contain" />
+            </div>
+            <div>
+              <p className="font-tenor text-lg text-gold">RIRI JOUR J</p>
+              <p className="text-white/20 text-sm">Metz • Lorraine</p>
+            </div>
           </div>
           <div className="flex items-center gap-2 text-white/30">
             <Phone size={14} />

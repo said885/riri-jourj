@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import { motion, useScroll, useTransform, useSpring, useMotionValue } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring, useMotionValue, AnimatePresence } from "framer-motion";
 import { Instagram, Phone, MessageCircle, Menu, X, ChevronRight, Check, ArrowRight } from "lucide-react";
 
 const gallery = [
@@ -348,11 +348,6 @@ export default function Home() {
       </footer>
 
       {/* FORM */}
-      <motion.div 
-        initial={{ opacity: 0 }} 
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-      />
       <AnimatePresence>
         {formOpen && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setFormOpen(false)}>

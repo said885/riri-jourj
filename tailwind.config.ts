@@ -13,8 +13,8 @@ const config: Config = {
         dark: "#0a0a0a",
       },
       fontFamily: {
-        serif: ["Playfair Display", "serif"],
-        sans: ["Montserrat", "sans-serif"],
+        serif: ["Cormorant Garamond", "serif"],
+        sans: ["Inter", "sans-serif"],
       },
       animation: {
         "fade-in-up": "fadeInUp 0.8s ease-out forwards",

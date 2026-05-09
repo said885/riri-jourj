@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { Car, Calendar, MapPin, User, Phone, MessageCircle, Menu, X, Check, Sparkles, Crown, ArrowRight, Instagram } from "lucide-react";
+import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import { Instagram, Phone, MessageCircle, Menu, X, Check, ChevronDown, Star, Sparkles, Crown, ArrowRight } from "lucide-react";
 
 const navLinks = [
   { name: "Accueil", href: "#home" },
@@ -17,26 +18,61 @@ const vehicles = [
     category: "SUV Prestige",
     image: "https://images.unsplash.com/photo-1603583153606-aec318f6d7b7?q=80&w=1200&auto=format&fit=crop",
     price: "à partir de 350€",
-    badge: "Lancement : -200€",
+    badge: "-200€ OFFERT",
     features: ["Intérieur cuir nappa", "Climatisation automatique", "Chauffeur privé"],
-    description: "L'incontournable pour vos événements exceptionnels",
+  },
+  {
+    name: "Mercedes Classe S",
+    category: "Berline Executive",
+    image: "https://images.unsplash.com/photo-1616429445671-37f5ade8641f?q=80&w=1200&auto=format&fit=crop",
+    price: "à partir de 280€",
+    badge: null,
+    features: ["Interior cuir premium", "Sièges massants", "Chauffeur VIP"],
+  },
+  {
+    name: "BMW Série 7",
+    category: "Limousine",
+    image: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=1200&auto=format&fit=crop",
+    price: "à partir de 320€",
+    badge: null,
+    features: ["Maximal confort", "Espace XXL", "Bar à champagne"],
   },
 ];
 
 const services = [
-  { icon: Crown, name: "Mariage", desc: "Faites une entrée remarqué" },
-  { icon: Car, name: "VIP", desc: "Transport événementiel" },
-  { icon: Sparkles, name: "Célébration", desc: "Moments exceptionnels" },
+  { icon: Crown, name: "Mariage", desc: "Une entrée memorable" },
+  { icon: Star, name: "VIP", desc: "Transfert événementiel" },
+  { icon: Sparkles, name: "Célébration", desc: "Moments uniques" },
 ];
 
 const eventTypes = ["Mariage", "VIP", "Anniversaire", "Célébration", "Autre"];
+
+const fadeUp = {
+  initial: { opacity: 0, y: 60 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.8, ease: [0.4, 0, 0.2, 1] },
+};
+
+const stagger = {
+  animate: {
+    transition: {
+      staggerChildren: 0.15,
+    },
+  },
+};
 
 export default function Home() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [formData, setFormData] = useState({ name: "", date: "", eventType: "", place: "" });
+  const [mounted, setMounted] = useState(false);
+
+  const { scrollY } = useScroll();
+  const heroOpacity = useTransform(scrollY, [0, 400], [1, 0]);
+  const heroScale = useTransform(scrollY, [0, 400], [1, 1.1]);
 
   useEffect(() => {
+    setMounted(true);
     const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
@@ -48,218 +84,344 @@ export default function Home() {
     window.open(`https://wa.me/33762912640?text=${message}`, "_blank");
   };
 
+  const scrollToFlotte = () => {
+    document.getElementById("flotte")?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  if (!mounted) return null;
+
   return (
     <>
       {/* Navbar */}
-      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? "glass py-3" : "py-6"}`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <motion.nav
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.6, delay: 0.2 }}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? "glass py-4" : "py-8"}`}
+      >
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="flex items-center justify-between">
-            <a href="#home" className="font-serif text-xl sm:text-2xl text-gold font-bold tracking-wider">
+            <motion.a
+              href="#home"
+              className="font-cormorant text-2xl lg:text-3xl text-gold font-semibold tracking-wider"
+              whileHover={{ scale: 1.02 }}
+            >
               RIRI JOUR J
-            </a>
-            
+            </motion.a>
+
             {/* Desktop Nav */}
-            <div className="hidden md:flex items-center space-x-8">
+            <div className="hidden lg:flex items-center space-x-10">
               {navLinks.map((link) => (
-                <a key={link.name} href={link.href} className="text-white/80 hover:text-gold transition-colors text-sm uppercase tracking-widest">
+                <motion.a
+                  key={link.name}
+                  href={link.href}
+                  className="text-white/70 hover:text-gold transition-colors text-sm font-light tracking-widest uppercase"
+                  whileHover={{ y: -2 }}
+                >
                   {link.name}
-                </a>
+                </motion.a>
               ))}
-              <a href="#contact" className="px-6 py-2 bg-gold text-dark font-semibold text-sm tracking-wider hover:bg-white transition-colors">
-                RÉSERVER
-              </a>
+              <motion.a
+                href="#contact"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.98 }}
+                className="px-8 py-3 bg-gold text-black font-medium text-sm tracking-wider hover:bg-white transition-colors rounded-full"
+              >
+                Réserver
+              </motion.a>
             </div>
 
             {/* Mobile Menu Button */}
-            <button className="md:hidden text-white" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+            <button className="lg:hidden text-white" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
               {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
             </button>
           </div>
         </div>
 
         {/* Mobile Menu */}
-        {mobileMenuOpen && (
-          <div className="md:hidden glass mt-4 mx-4 rounded-xl p-6">
-            {navLinks.map((link) => (
-              <a
-                key={link.name}
-                href={link.href}
-                className="block py-3 text-white/80 hover:text-gold transition-colors text-lg border-b border-white/10"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                {link.name}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="lg:hidden glass mt-4 mx-4 rounded-2xl overflow-hidden"
+            >
+              {navLinks.map((link) => (
+                <a
+                  key={link.name}
+                  href={link.href}
+                  className="block py-4 px-6 text-white/70 hover:text-gold transition-colors border-b border-white/5"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {link.name}
+                </a>
+              ))}
+              <a href="#contact" className="block py-4 px-6 text-gold font-medium">
+                Réserver
               </a>
-            ))}
-            <a href="#contact" className="block mt-4 px-6 py-3 bg-gold text-dark font-semibold text-center tracking-wider">
-              RÉSERVER
-            </a>
-          </div>
-        )}
-      </nav>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.nav>
 
       {/* Hero Section */}
       <section id="home" className="relative h-screen flex items-center justify-center overflow-hidden">
-        {/* Background Image */}
-        <div className="absolute inset-0 z-0">
+        <motion.div style={{ opacity: heroOpacity, scale: heroScale }} className="absolute inset-0 z-0">
           <Image
-            src="https://images.unsplash.com/photo-1603583153606-aec318f6d7b7?q=80&w=1920&auto=format&fit=crop"
-            alt="Porsche Cayenne S"
+            src="https://images.unsplash.com/photo-1504215680853-026ed2a45def?q=80&w=1920&auto=format&fit=crop"
+            alt="Luxury Car"
             fill
             className="object-cover"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-dark/70 via-dark/50 to-dark" />
-        </div>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/80" />
+        </motion.div>
 
-        <div className="relative z-10 text-center px-4 max-w-5xl mx-auto">
-          <p className="text-gold uppercase tracking-[0.3em] text-sm sm:text-base mb-6 animate-fade-in">
+        <div className="relative z-10 text-center px-6 max-w-5xl mx-auto">
+          <motion.p
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className="text-gold uppercase tracking-[0.4em] text-sm lg:text-base mb-8 font-light"
+          >
             Location de Véhicules de Prestige
-          </p>
-          <h1 className="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold mb-6 animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
+          </motion.p>
+
+          <motion.h1
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.5 }}
+            className="font-cormorant text-5xl sm:text-7xl lg:text-8xl font-semibold mb-8 leading-tight"
+          >
             L&apos;Élégance à votre <span className="text-gold">service</span>
-          </h1>
-          <p className="text-white/70 text-lg sm:text-xl max-w-2xl mx-auto mb-10 animate-fade-in-up" style={{ animationDelay: "0.4s" }}>
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.7 }}
+            className="text-white/60 text-lg lg:text-xl max-w-2xl mx-auto mb-12 font-light"
+          >
             Location de véhicule avec chauffeur pour vos plus beaux événements en Lorraine.
-          </p>
-          <a href="#contact" className="inline-flex items-center gap-2 px-8 py-4 bg-gold text-dark font-semibold tracking-wider hover:bg-white transition-all animate-fade-in-up gold-glow" style={{ animationDelay: "0.6s" }}>
-            Réserver maintenant <ArrowRight size={20} />
-          </a>
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.9 }}
+          >
+            <motion.button
+              onClick={scrollToFlotte}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
+              className="inline-flex items-center gap-3 px-10 py-4 bg-gold text-black font-medium tracking-wider rounded-full gold-glow"
+            >
+              Découvrir la flotte <ArrowRight size={20} />
+            </motion.button>
+          </motion.div>
         </div>
 
         {/* Scroll Indicator */}
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce">
-          <div className="w-6 h-10 border-2 border-gold rounded-full flex justify-center pt-2">
-            <div className="w-1 h-2 bg-gold rounded-full" />
-          </div>
-        </div>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.5 }}
+          className="absolute bottom-10 left-1/2 -translate-x-1/2"
+        >
+          <motion.div
+            animate={{ y: [0, 10, 0] }}
+            transition={{ duration: 2, repeat: Infinity }}
+            className="flex flex-col items-center gap-2 text-white/40"
+          >
+            <span className="text-xs tracking-widest uppercase">Scroll</span>
+            <ChevronDown size={20} />
+          </motion.div>
+        </motion.div>
       </section>
 
       {/* Flotte Section */}
-      <section id="flotte" className="py-24 bg-dark">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <p className="text-gold uppercase tracking-[0.3em] text-sm mb-4">Notre Flotte</p>
-            <h2 className="font-serif text-4xl sm:text-5xl font-bold">Véhicules d&apos;Exception</h2>
-          </div>
+      <section id="flotte" className="py-32 lg:py-48">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-20"
+          >
+            <p className="text-gold uppercase tracking-[0.4em] text-sm mb-4 font-light">Notre Flotte</p>
+            <h2 className="font-cormorant text-4xl sm:text-5xl lg:text-6xl font-semibold">
+              Véhicules d&apos;Exception
+            </h2>
+          </motion.div>
 
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Vehicle Image */}
-            <div className="relative group">
-              <div className="absolute -inset-4 border border-gold/30 rounded-2xl group-hover:border-gold/60 transition-all duration-500" />
-              <div className="relative overflow-hidden rounded-xl">
-                <Image
-                  src="https://images.unsplash.com/photo-1603583153606-aec318f6d7b7?q=80&w=800&auto=format&fit=crop"
-                  alt="Porsche Cayenne S"
-                  width={600}
-                  height={400}
-                  className="object-cover w-full h-[300px] sm:h-[400px] group-hover:scale-105 transition-transform duration-700"
-                />
-                <div className="absolute top-4 right-4 px-4 py-2 bg-gold text-dark font-bold text-sm">
-                  {vehicles[0].badge}
+          <motion.div
+            variants={stagger}
+            initial="initial"
+            whileInView="animate"
+            viewport={{ once: true }}
+            className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
+          >
+            {vehicles.map((vehicle, i) => (
+              <motion.div
+                key={i}
+                variants={fadeUp}
+                className="group relative bg-white/5 rounded-2xl overflow-hidden border border-white/5 hover:border-gold/30 transition-all duration-500"
+              >
+                {/* Image */}
+                <div className="relative h-64 overflow-hidden">
+                  <Image
+                    src={vehicle.image}
+                    alt={vehicle.name}
+                    fill
+                    className="object-cover hover-zoom group-hover:scale-110 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  {vehicle.badge && (
+                    <div className="absolute top-4 right-4 px-4 py-1.5 bg-gold text-black font-semibold text-sm rounded-full">
+                      {vehicle.badge}
+                    </div>
+                  )}
                 </div>
-              </div>
-            </div>
 
-            {/* Vehicle Details */}
-            <div>
-              <p className="text-gold text-sm uppercase tracking-widest mb-2">{vehicles[0].category}</p>
-              <h3 className="font-serif text-3xl sm:text-4xl font-bold mb-4">{vehicles[0].name}</h3>
-              <p className="text-white/60 mb-6">{vehicles[0].description}</p>
-              
-              <div className="space-y-4 mb-8">
-                {vehicles[0].features.map((feature, i) => (
-                  <div key={i} className="flex items-center gap-3">
-                    <Check className="text-gold w-5 h-5" />
-                    <span className="text-white/80">{feature}</span>
+                {/* Content */}
+                <div className="p-6">
+                  <p className="text-gold text-xs uppercase tracking-widest mb-2 font-light">{vehicle.category}</p>
+                  <h3 className="font-cormorant text-2xl font-semibold mb-2">{vehicle.name}</h3>
+
+                  <div className="space-y-3 mb-6">
+                    {vehicle.features.map((feature, j) => (
+                      <div key={j} className="flex items-center gap-2 text-white/50 text-sm">
+                        <Check className="text-gold w-4 h-4 flex-shrink-0" />
+                        <span>{feature}</span>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
 
-              <div className="text-2xl sm:text-3xl font-serif text-gold mb-8">
-                {vehicles[0].price}
-              </div>
-
-              <a href="#contact" className="inline-flex items-center gap-2 px-8 py-4 border border-gold text-gold font-semibold tracking-wider hover:bg-gold hover:text-dark transition-all">
-                Réserver ce véhicule
-              </a>
-            </div>
-          </div>
+                  <div className="flex items-end justify-between">
+                    <div>
+                      <span className="text-gold font-cormorant text-3xl">{vehicle.price}</span>
+                    </div>
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="px-6 py-2 border border-gold/30 text-gold text-sm rounded-full hover:bg-gold hover:text-black transition-colors"
+                    >
+                      Réserver
+                    </motion.button>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
       </section>
 
       {/* Services Section */}
-      <section id="services" className="py-24 bg-dark relative">
-        <div className="absolute inset-0 bg-gradient-to-b from-dark via-dark/95 to-dark" />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <p className="text-gold uppercase tracking-[0.3em] text-sm mb-4">Services</p>
-            <h2 className="font-serif text-4xl sm:text-5xl font-bold">Une Expérience Sur Mesure</h2>
-          </div>
+      <section id="services" className="py-32 lg:py-48 bg-black/20">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-20"
+          >
+            <p className="text-gold uppercase tracking-[0.4em] text-sm mb-4 font-light">Services</p>
+            <h2 className="font-cormorant text-4xl sm:text-5xl lg:text-6xl font-semibold">
+              Une Expérience Sur Mesure
+            </h2>
+          </motion.div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <motion.div
+            variants={stagger}
+            initial="initial"
+            whileInView="animate"
+            viewport={{ once: true }}
+            className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
             {services.map((service, i) => (
-              <div key={i} className="p-8 border border-gold/20 hover:border-gold/50 transition-all group text-center">
-                <service.icon className="w-12 h-12 text-gold mx-auto mb-6 group-hover:scale-110 transition-transform" />
-                <h3 className="font-serif text-xl font-bold mb-2">{service.name}</h3>
-                <p className="text-white/60">{service.desc}</p>
-              </div>
+              <motion.div
+                key={i}
+                variants={fadeUp}
+                className="p-10 bg-white/5 rounded-2xl border border-white/5 hover:border-gold/30 hover:bg-white/[0.07] transition-all duration-500 group text-center"
+              >
+                <motion.div
+                  whileHover={{ scale: 1.1, rotate: 5 }}
+                  className="w-16 h-16 mx-auto mb-6 rounded-full border border-gold/20 flex items-center justify-center"
+                >
+                  <service.icon className="w-8 h-8 text-gold" />
+                </motion.div>
+                <h3 className="font-cormorant text-xl font-semibold mb-2">{service.name}</h3>
+                <p className="text-white/40 font-light">{service.desc}</p>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* Reservation Form */}
-      <section id="contact" className="py-24 bg-dark">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <p className="text-gold uppercase tracking-[0.3em] text-sm mb-4">Réservation</p>
-            <h2 className="font-serif text-4xl sm:text-5xl font-bold">Contactez-nous</h2>
-            <p className="text-white/60 mt-4">Remplissez le formulaire et nous vous contacterons</p>
-          </div>
+      <section id="contact" className="py-32 lg:py-48">
+        <div className="max-w-3xl mx-auto px-6 lg:px-12">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-16"
+          >
+            <p className="text-gold uppercase tracking-[0.4em] text-sm mb-4 font-light">Réservation</p>
+            <h2 className="font-cormorant text-4xl sm:text-5xl lg:text-6xl font-semibold">
+             Contactez-nous
+            </h2>
+            <p className="text-white/40 mt-4 font-light">Remplissez le formulaire et nous vous contacterons</p>
+          </motion.div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid sm:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm text-white/60 mb-2 uppercase tracking-wider">Nom complet</label>
-                <div className="relative">
-                  <User className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 w-5 h-5" />
-                  <input
-                    type="text"
-                    required
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full bg-white/5 border border-white/10 rounded-lg py-4 pl-14 pr-4 text-white placeholder-white/30 focus:border-gold focus:outline-none transition-colors"
-                    placeholder="Votre nom"
-                  />
-                </div>
+          <motion.form
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            onSubmit={handleSubmit}
+            className="space-y-8"
+          >
+            <div className="grid sm:grid-cols-2 gap-8">
+              <div className="relative">
+                <label className="block text-sm text-white/40 mb-3 uppercase tracking-wider font-light">Nom complet</label>
+                <input
+                  type="text"
+                  required
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  className="w-full bg-white/5 border-b border-white/10 py-4 text-white placeholder-white/30 focus:border-gold focus:outline-none transition-colors rounded-none"
+                  placeholder="Votre nom"
+                />
               </div>
-              <div>
-                <label className="block text-sm text-white/60 mb-2 uppercase tracking-wider">Date</label>
-                <div className="relative">
-                  <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 w-5 h-5" />
-                  <input
-                    type="date"
-                    required
-                    value={formData.date}
-                    onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                    className="w-full bg-white/5 border border-white/10 rounded-lg py-4 pl-14 pr-4 text-white focus:border-gold focus:outline-none transition-colors"
-                  />
-                </div>
+              <div className="relative">
+                <label className="block text-sm text-white/40 mb-3 uppercase tracking-wider font-light">Date</label>
+                <input
+                  type="date"
+                  required
+                  value={formData.date}
+                  onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                  className="w-full bg-white/5 border-b border-white/10 py-4 text-white focus:border-gold focus:outline-none transition-colors rounded-none"
+                />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm text-white/60 mb-2 uppercase tracking-wider">Type d&apos;événement</label>
-              <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+              <label className="block text-sm text-white/40 mb-4 uppercase tracking-wider font-light">Type d&apos;événement</label>
+              <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
                 {eventTypes.map((type) => (
                   <button
                     key={type}
                     type="button"
                     onClick={() => setFormData({ ...formData, eventType: type })}
-                    className={`py-3 border rounded-lg transition-all ${
+                    className={`py-3 border-b-2 transition-all ${
                       formData.eventType === type
-                        ? "bg-gold text-dark border-gold font-semibold"
-                        : "border-white/10 text-white/60 hover:border-gold/50"
+                        ? "border-gold text-gold"
+                        : "border-white/10 text-white/40 hover:border-gold/30"
                     }`}
                   >
                     {type}
@@ -268,54 +430,63 @@ export default function Home() {
               </div>
             </div>
 
-            <div>
-              <label className="block text-sm text-white/60 mb-2 uppercase tracking-wider">Lieu</label>
-              <div className="relative">
-                <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 w-5 h-5" />
-                <input
-                  type="text"
-                  required
-                  value={formData.place}
-                  onChange={(e) => setFormData({ ...formData, place: e.target.value })}
-                  className="w-full bg-white/5 border border-white/10 rounded-lg py-4 pl-14 pr-4 text-white placeholder-white/30 focus:border-gold focus:outline-none transition-colors"
-                  placeholder="Ville ou lieu de rdV"
-                />
-              </div>
+            <div className="relative">
+              <label className="block text-sm text-white/40 mb-3 uppercase tracking-wider font-light">Lieu</label>
+              <input
+                type="text"
+                required
+                value={formData.place}
+                onChange={(e) => setFormData({ ...formData, place: e.target.value })}
+                className="w-full bg-white/5 border-b border-white/10 py-4 text-white placeholder-white/30 focus:border-gold focus:outline-none transition-colors rounded-none"
+                placeholder="Ville ou lieu de rencontre"
+              />
             </div>
 
-            <button type="submit" className="w-full py-4 bg-gold text-dark font-semibold tracking-wider hover:bg-white transition-colors">
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              type="submit"
+              className="w-full py-5 bg-gold text-black font-medium tracking-wider rounded-full hover:bg-white transition-colors"
+            >
               Envoyer ma demande
-            </button>
-          </form>
+            </motion.button>
+          </motion.form>
         </div>
       </section>
 
       {/* Social Proof */}
-      <section className="py-16 bg-dark border-t border-white/5">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <Instagram className="w-10 h-10 text-gold mx-auto mb-4" />
-          <p className="text-white/60 mb-2">Suivez-nous sur Instagram</p>
-          <a
-            href="https://instagram.com/ririjourj57"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-gold text-xl hover:underline"
+      <section className="py-20 border-t border-white/5">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12 text-center">
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            className="flex flex-col items-center gap-4"
           >
-            @ririjourj57
-          </a>
+            <Instagram className="w-10 h-10 text-gold" />
+            <p className="text-white/40 font-light">Suivez-nous sur Instagram</p>
+            <a
+              href="https://instagram.com/ririjourj57"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gold text-xl hover:underline font-cormorant text-2xl"
+            >
+              @ririjourj57
+            </a>
+          </motion.div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-12 bg-dark border-t border-gold/20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <footer className="py-12 border-t border-gold/10">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
             <div className="text-center sm:text-left">
-              <p className="font-serif text-2xl text-gold font-bold">RIRI JOUR J</p>
-              <p className="text-white/40 text-sm mt-1">Location de véhicules de prestige</p>
+              <p className="font-cormorant text-2xl text-gold font-semibold">RIRI JOUR J</p>
+              <p className="text-white/30 text-sm mt-1 font-light">Location de véhicules de prestige</p>
             </div>
 
-            <div className="flex items-center gap-2 text-white/60">
+            <div className="flex items-center gap-2 text-white/40">
               <Phone className="w-5 h-5 text-gold" />
               <a href="tel:0762912640" className="hover:text-gold transition-colors">
                 07.62.91.26.40
@@ -324,7 +495,7 @@ export default function Home() {
           </div>
 
           <div className="mt-8 pt-8 border-t border-white/5 text-center">
-            <p className="text-white/30 text-xs">
+            <p className="text-white/20 text-xs font-light">
               © 2024 Riri Jour J. Tous droits réservés. | Ne pas jeter sur la voie publique.
             </p>
           </div>
@@ -332,14 +503,19 @@ export default function Home() {
       </footer>
 
       {/* Floating WhatsApp Button */}
-      <a
+      <motion.a
         href="https://wa.me/33762912640"
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 w-14 h-14 bg-green-500 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform z-50"
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        transition={{ delay: 1, type: "spring" }}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        className="fixed bottom-8 right-8 w-14 h-14 bg-gold rounded-full flex items-center justify-center shadow-lg z-50"
       >
-        <MessageCircle className="w-7 h-7 text-white" />
-      </a>
+        <MessageCircle className="w-7 h-7 text-black" />
+      </motion.a>
     </>
   );
 }

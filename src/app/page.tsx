@@ -66,7 +66,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    const handleMouseMove = (e: ClientRectangle) => {
+    const handleMouseMove = (e: MouseEvent) => {
       const x = (e.clientX / window.innerWidth - 0.5) * 20;
       const y = (e.clientY / window.innerHeight - 0.5) * 20;
       mouseX.set(x);

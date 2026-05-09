@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { Cormorant_Display, Inter } from "next/font/google";
+import { Cormorant_Garamond, Inter } from "next/font/google";
 import "./globals.css";
 
-const cormorant = Cormorant_Display({
+const cormorant = Cormorant_Garamond({
   weight: ["300", "400", "500", "600", "700"],
   subsets: ["latin"],
   variable: "--font-cormorant",

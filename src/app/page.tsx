@@ -5,34 +5,26 @@ import Image from "next/image";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { 
   Instagram, Phone, MessageCircle, Menu, X, ChevronRight, 
-  Calendar, Heart, Briefcase, Plane, Sparkles, ArrowRight, 
-  Check, Car, Gauge, Gem
+  Heart, Gem, Check, ArrowRight
 } from "lucide-react";
 
-const sections = {
-  hero: { title: "L'Exceptionnel pour votre", subtitle: "Jour J" },
-};
-
-const features = [
-  { icon: Gem, title: "Un écrin de luxe", desc: "Profitez d'un intérieur raffiné et technologique" },
-  { icon: Gauge, title: "Prestige & Puissance", desc: "435cv sous le capot" },
-  { icon: Heart, title: "Pour vos événements", desc: "Mariage, VIP, celebration exclusive" },
+const gallery = [
+  { src: "/images/avant.jpg", alt: "Vue avant" },
+  { src: "/images/interieur-leds.png", alt: "Intérieur LEDs" },
+  { src: "/images/jante.jpg", alt: "Jante prestige" },
+  { src: "/images/mariage.png", alt: "Mariage" },
+  { src: "/images/profil.jpg", alt: "Profil" },
+  { src: "/images/arriere.jpg", alt: "Vue arrière" },
 ];
 
 const mariages = [
-  { id: 1, title: " Mariage fleuri", image: "/images/mariage-fleurs.webp" },
-  { id: 2, title: "Moment inoubliable", image: "/images/mariages.webp" },
-];
-
-const gallery = [
-  "/images/cayenne-ext.webp", "/images/cayenne-int.webp",
-  "/images/arrière.webp", "/images/profil.webp",
-  "/images/jante.webp", "/images/mariage-fleurs.webp",
+  { src: "/images/mariage.png", title: "Mariages" },
+  { src: "/images/avant.jpg", title: "Événements" },
 ];
 
 const steps = [
   { id: 1, title: "Date", options: ["Sam 24 Mai", "Dim 25 Mai", "Sam 31 Mai", "Dim 1er Juin"] },
-  { id: 2, title: " Événement", options: ["Mariage", "VIP", "Anniversaire", "Célébration"] },
+  { id: 2, title: "Événement", options: ["Mariage", "VIP", "Anniversaire", "Célébration"] },
   { id: 3, title: "Véhicule", options: ["Porsche Cayenne S", "Porsche Cayenne +"] },
   { id: 4, title: "Contact", fields: ["Nom", "Téléphone", "Lieu"] },
 ];
@@ -87,22 +79,18 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#050505]">
-      {/* Grain */}
-      <div className="fixed inset-0 pointer-events-none opacity-[0.025] z-50 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MDAiIGhlaWdodD0iNTAwIj48ZmlsdGVyIGlkPSJub2lzZSI+PGZlVHVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjAuOSIgbk9jdGF2ZXM9IjMiIHN0aXRjaFRpbGVzPSJzdGl0Y2giLz48L2ZpbHRlcj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWx0ZXI9InVybCgjbm9pc2UpIi8+PC9zdmc+')]" />
+      {/* Grain Effect */}
+      <div className="fixed inset-0 pointer-events-none opacity-[0.03] z-50 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MDAiIGhlaWdodD0iNTAwIj48ZmlsdGVyIGlkPSJub2lzZSI+PGZlVHVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjAuOSIgbk9jdGF2ZXM9IjMiIHN0aXRjaFRpbGVzPSJzdGl0Y2giLz48L2ZpbHRlcj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWx0ZXI9InVybCgjbm9pc2UpIi8+PC9zdmc+')]" />
 
       {/* NAV */}
       <motion.nav className={`fixed top-0 left-0 right-0 z-40 transition-all ${scrolled ? "glass py-3" : "py-6"}`}>
         <div className="max-w-6xl mx-auto px-6 flex items-center justify-between">
-          <button onClick={() => scrollTo("hero")} className="font-tenor text-xl text-gold tracking-[0.2em]">
-            RIRI JOUR J
-          </button>
+          <button onClick={() => scrollTo("hero")} className="font-tenor text-xl text-gold tracking-[0.2em]">RIRI JOUR J</button>
           <div className="hidden lg:flex items-center gap-8">
             {["Accueil", "Confort", "Événements", "Contact"].map((l) => (
               <button key={l} onClick={() => scrollTo(l.toLowerCase())} className="text-sm text-white/40 hover:text-gold transition">{l}</button>
             ))}
-            <button onClick={() => setFormOpen(true)} className="px-6 py-2.5 bg-gold text-[#050505] rounded-full hover:bg-white text-sm font-medium">
-              Réserver
-            </button>
+            <button onClick={() => setFormOpen(true)} className="px-6 py-2.5 bg-gold text-[#050505] rounded-full hover:bg-white text-sm font-medium">Réserver</button>
           </div>
           <button className="lg:hidden" onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? <X /> : <Menu />}</button>
         </div>
@@ -115,27 +103,23 @@ export default function Home() {
         )}
       </motion.nav>
 
-      {/* HERO - Place d'Armes Metz */}
+      {/* HERO - Place d'Armes Metz avec image locale */}
       <section ref={heroRef} id="hero" className="relative min-h-screen flex items-center">
         <motion.div style={{ y, opacity }} className="absolute inset-0 -z-10">
-          <Image src="https://images.unsplash.com/photo-1616423664045-60dd7c01f3b7?q=80&w=2000" alt="Porsche Cayenne Metz" fill className="object-cover brightness-[0.6]" priority />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#050505] via-transparent to-[#050505]" />
+          <Image src="/images/hero-metz.jpg" alt="Porsche Cayenne Metz Place d'Armes" fill className="object-cover brightness-[0.6]" priority />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#050505] via-[#050505]/60 to-[#050505]" />
         </motion.div>
         <div className="max-w-6xl mx-auto px-6 py-32 w-full">
-          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="text-gold text-xs tracking-[0.4em] uppercase mb-6">
-            Metz • Lorraine
-          </motion.p>
+          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="text-gold text-xs tracking-[0.4em] uppercase mb-6">Metz • Lorraine</motion.p>
           <motion.h1 initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="font-tenor text-5xl lg:text-7xl font-light mb-6">
-            {sections.hero.title}<br /><span className="text-gold">{sections.hero.subtitle}</span>
+            L'Exceptionnel pour votre<br /><span className="text-gold">Jour J</span>
           </motion.h1>
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="text-white/40 max-w-md mb-10 font-light">
             Location de Porsche Cayenne S avec chauffeur pour vos événements exceptionnels.
           </motion.p>
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}>
-            <button onClick={() => setFormOpen(true)} className="px-8 py-4 bg-gold text-[#050505] rounded-full hover:bg-white flex items-center gap-2">
-              Réserver <ArrowRight size={18} />
-            </button>
-          </motion.div>
+          <motion.button initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }} onClick={() => setFormOpen(true)} className="px-8 py-4 bg-gold text-[#050505] rounded-full hover:bg-white flex items-center gap-2">
+            Réserver <ArrowRight size={18} />
+          </motion.button>
         </div>
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2 }} className="absolute bottom-8 left-1/2 -translate-x-1/2">
           <motion.div animate={{ y: [0, 8, 0] }} transition={{ duration: 2, repeat: Infinity }} className="text-white/20 flex flex-col items-center gap-2">
@@ -145,13 +129,13 @@ export default function Home() {
         </motion.div>
       </section>
 
-      {/* CONFORT INTÉRIEUR - LEDs Violettes */}
+      {/* CONFORT - LEDs Violettes avec Glassmorphism */}
       <section id="confort" className="py-32 px-6">
         <div className="max-w-6xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <motion.div {...fadeIn} className="order-2 lg:order-1">
-              <div className="relative aspect-[3/4] rounded-2xl overflow-hidden">
-                <Image src="https://images.unsplash.com/photo-1542362567-b07e54358753?q=80&w=800" alt="Intérieur Porsche LEDs" fill className="object-cover" />
+              <div className="relative aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl shadow-gold/5">
+                <Image src="/images/interieur-leds.png" alt="Intérieur Porsche LEDs violettes" fill className="object-cover" priority />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#050505]/60" />
               </div>
             </motion.div>
@@ -163,16 +147,14 @@ export default function Home() {
                 LEDs ambient violettes, cuir nappa, système audio premium.
               </p>
               <div className="grid grid-cols-2 gap-6 mb-8">
-                {[
-                  "Cuir Nappa", "LEDs violettes", "Sièges massants", "Climatisation"
-                ].map((f, i) => (
+                {["Cuir Nappa", "LEDs violettes", "Sièges massants", "Climatisation"].map((f, i) => (
                   <div key={i} className="flex items-center gap-3">
-                    <Check size={16} className="text-gold" />
+                    <Check size={16} className="text-gold flex-shrink-0" />
                     <span className="text-white/60">{f}</span>
                   </div>
                 ))}
               </div>
-              <button onClick={() => setFormOpen(true)} className="px-8 py-4 border border-gold text-gold rounded-full hover:bg-gold hover:text-[#050505] transition">
+              <button onClick={() => setFormOpen(true)} className="px-8 py-4 border border-gold/40 text-gold rounded-full hover:bg-gold hover:text-[#050505] transition backdrop-blur-sm">
                 Réserver ce véhicule
               </button>
             </motion.div>
@@ -180,27 +162,26 @@ export default function Home() {
         </div>
       </section>
 
-      {/* MARIAGE & ÉVÉNEMENTS - Polaroid Layout */}
+      {/* MARIAGE - Polaroid Layout */}
       <section id="événements" className="py-32 px-6 bg-white/[0.02]">
         <div className="max-w-6xl mx-auto">
           <motion.div {...fadeIn} className="text-center mb-16">
             <p className="text-gold text-xs tracking-[0.3em] uppercase mb-3">Événements</p>
             <h2 className="font-tenor text-4xl lg:text-5xl">Vos moments exceptionnels</h2>
           </motion.div>
-
           <div className="grid md:grid-cols-2 gap-8">
             {mariages.map((m, i) => (
               <motion.div
-                key={m.id}
+                key={i}
                 initial={{ opacity: 0, rotateX: -10 }}
                 whileInView={{ opacity: 1, rotateX: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.15 }}
                 className="group relative"
               >
-                <div className="absolute inset-0 bg-white/10 rounded-2xl transform rotate-1 transition-transform group-hover:rotate-2" />
+                <div className="absolute inset-0 bg-white/10 rounded-2xl transform rotate-1 transition-transform group-hover:rotate-2 shadow-xl" />
                 <div className="relative bg-white/5 rounded-xl overflow-hidden border border-white/10">
-                  <Image src="https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?q=80&w=800" alt={m.title} fill className="aspect-[4/3] object-cover grayscale group-hover:grayscale-0 transition-all duration-700" />
+                  <Image src={m.src} alt={m.title} fill className="aspect-[4/3] object-cover grayscale group-hover:grayscale-0 transition-all duration-700" />
                   <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 to-transparent">
                     <p className="font-tenor text-xl text-white">{m.title}</p>
                   </div>
@@ -211,37 +192,40 @@ export default function Home() {
         </div>
       </section>
 
-      {/* DÉTAILS - Jante Porsche */}
+      {/* JANTE - Prestige Focus */}
       <section className="py-32 px-6">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div {...fadeIn}>
-            <div className="relative w-48 h-48 mx-auto mb-8 rounded-full border border-gold/20 flex items-center justify-center">
-              <Image src="https://images.unsplash.com/photo-1617821472122-6fbdbfa055cc?q=80&w=400" alt="Jante Porsche" fill className="rounded-full object-cover" />
+            <div className="relative w-48 h-48 mx-auto mb-8 rounded-full border border-gold/20 flex items-center justify-center overflow-hidden">
+              <Image src="/images/jante.jpg" alt="Jante Porsche" fill className="object-cover" />
             </div>
             <p className="text-gold text-xs tracking-[0.3em] uppercase mb-3">Prestige & Excellence</p>
             <h2 className="font-tenor text-3xl lg:text-4xl mb-4">435cv de pur plaisir</h2>
-            <p className="text-white/40 font-light">
-              Étriers rouges, jantes 21 pouces, moteur V6 biturbo. Chaque détail reflète l'excellence Porsche.
-            </p>
+            <p className="text-white/40 font-light">Étriers rouges, jantes 21 pouces, moteur V6 biturbo.</p>
           </motion.div>
         </div>
       </section>
 
-      {/* GALLERY GRID */}
+      {/* GALLERIE - Zoom au survol */}
       <section className="py-16 px-6">
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
             {gallery.map((img, i) => (
               <motion.div
                 key={i}
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.05 }}
-                className="relative aspect-square group"
+                className="relative aspect-square group overflow-hidden rounded-lg"
               >
-                <Image src={img} alt={`Vue ${i + 1}`} fill className="object-cover rounded-lg group-hover:scale-105 transition-transform duration-500" />
-                <div className="absolute inset-0 border border-gold/0 group-hover:border-gold/40 rounded-lg transition-colors" />
+                <Image 
+                  src={img.src} 
+                  alt={img.alt} 
+                  fill 
+                  className="object-cover transition-transform duration-500 group-hover:scale-110" 
+                />
+                <div className="absolute inset-0 border border-gold/0 group-hover:border-gold/40 rounded-lg transition-all" />
               </motion.div>
             ))}
           </div>
